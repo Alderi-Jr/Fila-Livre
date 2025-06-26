@@ -1,4 +1,5 @@
 📱 Fila Livre - Documentação
+
 Um aplicativo para gerenciamento de filas em estabelecimentos comerciais, com autenticação persistente e interface intuitiva.
 
 🛠 Tecnologias Utilizadas
@@ -80,7 +81,7 @@ Botões de atualização e saída
 Clone o repositório:
 
 bash
-git clone [URL_DO_REPO]
+git clone https://github.com/Alderi-Jr/Fila-Livre/
 Instale as dependências:
 
 bash
