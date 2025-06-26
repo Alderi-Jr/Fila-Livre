@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'screens/splash_screen.dart';
 import 'screens/estabelecimento_screen.dart';
-import 'package:filalivre/models/estabelecimento.dart';
 import 'screens/fila_screen.dart';
+import 'screens/login_screen.dart';
+import 'models/estabelecimento.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(const FilaLivreApp());
+}
 
 class FilaLivreApp extends StatelessWidget {
   const FilaLivreApp({super.key});
@@ -17,25 +23,23 @@ class FilaLivreApp extends StatelessWidget {
         useMaterial3: true,
       ),
       darkTheme: ThemeData(
-    colorScheme: ColorScheme.fromSeed(
-    seedColor: Colors.teal,
-    brightness: Brightness.dark,
-    ),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.teal,
+          brightness: Brightness.dark,
+        ),
         useMaterial3: true,
       ),
       themeMode: ThemeMode.system,
-      initialRoute: '/',
+      home: const SplashScreen(), // Tela inicial direta
       routes: {
-        '/': (_) => const SplashScreen(),
+        '/login': (context) => const LoginScreen(),
         '/estabelecimentos': (context) => const EstabelecimentoScreen(),
         '/fila': (context) {
           final args = ModalRoute.of(context)?.settings.arguments;
-
           if (args == null || args is! Estabelecimento) {
             Navigator.pop(context);
-            return const Placeholder(); // Ou uma tela de erro
+            return const Center(child: Text('Erro: Estabelecimento não encontrado'));
           }
-
           return FilaScreen(estabelecimento: args);
         },
       },

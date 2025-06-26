@@ -6,24 +6,22 @@ publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.7.2
+  sdk: '>=3.7.2 <4.0.0' # Versão mais flexível
 
 dependencies:
   flutter:
     sdk: flutter
   shared_preferences: ^2.2.2
-
-
+  cached_network_image: ^3.2.3 # Adicionei pois você usa imagens remotas
   cupertino_icons: ^1.0.8
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
   flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.13.1 # Movi para dev_dependencies
 
 flutter:
   assets:
-    - assets/images/Master.jpg
-
+    - assets/images/ # Pasta completa é melhor que arquivo único
   uses-material-design: true

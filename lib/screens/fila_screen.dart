@@ -1,3 +1,5 @@
+import 'package:filalivre/screens/login_screen.dart';
+import 'package:filalivre/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import '../services/local_storage.dart';
 import '../models/estabelecimento.dart';
@@ -53,6 +55,15 @@ class _FilaScreenState extends State<FilaScreen> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () async {
+              await AuthService.logout();
+              Navigator.pushReplacementNamed(context, '/login');
+            },
+          ),
+        ],
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
@@ -193,6 +204,16 @@ class _FilaScreenState extends State<FilaScreen> {
                     },
                     child: const Text("Sair da Fila"),
                   ),
+                  IconButton(
+                    icon: const Icon(Icons.logout),
+                    onPressed: () async {
+                      await AuthService.logout();
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (_) => const LoginScreen()),
+                      );
+                    },
+                  )
                 ],
               ),
             ),

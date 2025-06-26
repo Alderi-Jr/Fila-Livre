@@ -1,3 +1,4 @@
+import 'package:filalivre/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import '../models/estabelecimento.dart';
 
@@ -8,7 +9,22 @@ class EstabelecimentoScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Escolha o Estabelecimento")),
+      appBar: AppBar(
+        title: const Text('Acompanhamento da Fila'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () async {
+              await AuthService.logout();
+              Navigator.pushReplacementNamed(context, '/login');
+            },
+          ),
+        ],
+      ),
       body: ListView.builder(
         itemCount: estabelecimentos.length,
         itemBuilder: (context, index) {
