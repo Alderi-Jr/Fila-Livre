@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-
+import '../services/local_storage.dart';
 import '../models/estabelecimento.dart';
 
 class FilaScreen extends StatefulWidget {
   final Estabelecimento estabelecimento;
 
   const FilaScreen({super.key, required this.estabelecimento});
-
-
 
   @override
   State<FilaScreen> createState() => _FilaScreenState();
@@ -17,22 +15,43 @@ class _FilaScreenState extends State<FilaScreen> {
   int posicao = 5;
   int tempoEspera = 20;
 
-  void atualizarFila() {
+  @override
+  void initState() {
+    super.initState();
+    _carregarPosicaoSalva();
+  }
+
+  Future<void> _carregarPosicaoSalva() async {
+    final dados = await LocalStorage.carregarPosicao();
+    setState(() {
+      posicao = dados['posicao']!;
+      tempoEspera = dados['tempoEspera']!;
+    });
+  }
+
+  void atualizarFila() async {
     setState(() {
       if (posicao > 0) {
         posicao--;
-        tempoEspera = (tempoEspera * 0.8).round();
+        tempoEspera -= 4;
       }
     });
+    await LocalStorage.salvarPosicao(posicao, tempoEspera);
   }
 
   @override
   Widget build(BuildContext context) {
-    final double progresso = 1 - (posicao / 10);
+    final progresso = 1 - (posicao / 10);
     final ThemeData theme = Theme.of(context);
+    final animation = Tween(begin: 0.0, end: progresso).animate(
+      CurvedAnimation(
+        parent: ModalRoute.of(context)!.animation!,
+        curve: Curves.easeInOut,
+      ),
+    );
 
     return Scaffold(
-        extendBodyBehindAppBar: true,
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -105,26 +124,46 @@ class _FilaScreenState extends State<FilaScreen> {
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text("POSIÇÃO ATUAL", style: theme.textTheme.labelSmall),
-                                  Text("$posicaoª", style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+                                  Text(
+                                    "POSIÇÃO ATUAL",
+                                    style: theme.textTheme.labelSmall,
+                                  ),
+                                  Text(
+                                    "$posicaoª",
+                                    style: const TextStyle(
+                                      fontSize: 28,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
                                 ],
                               ),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text("TEMPO ESTIMADO", style: theme.textTheme.labelSmall),
-                                  Text("$tempoEspera min", style: const TextStyle(fontSize: 20)),
+                                  Text(
+                                    "TEMPO ESTIMADO",
+                                    style: theme.textTheme.labelSmall,
+                                  ),
+                                  Text(
+                                    "$tempoEspera min",
+                                    style: const TextStyle(fontSize: 20),
+                                  ),
                                 ],
                               ),
                             ],
                           ),
                           const SizedBox(height: 16),
-                          LinearProgressIndicator(
-                            value: progresso,
-                            minHeight: 10,
-                            borderRadius: BorderRadius.circular(10),
-                            color: theme.colorScheme.primary,
-                            backgroundColor: theme.colorScheme.primary.withOpacity(0.2),
+                          AnimatedBuilder(
+                            animation: animation,
+                            builder:
+                                (_, __) => LinearProgressIndicator(
+                                  value: animation.value,
+                                  minHeight: 10,
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: theme.colorScheme.primary,
+                                  backgroundColor: theme.colorScheme.primary
+                                      .withOpacity(0.2),
+                                ),
                           ),
                         ],
                       ),
@@ -147,11 +186,12 @@ class _FilaScreenState extends State<FilaScreen> {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  TextButton(
-                    onPressed: () {
+                  ElevatedButton(
+                    onPressed: () async {
+                      await LocalStorage.limparPosicao();
                       Navigator.pop(context);
                     },
-                    child: const Text("Sair da Fila", style: TextStyle(color: Colors.red)),
+                    child: const Text("Sair da Fila"),
                   ),
                 ],
               ),
