@@ -11,6 +11,15 @@ class _FilaScreenState extends State<FilaScreen> {
   int posicao = 5;
   int tempoEspera = 20;
 
+  void atualizarFila() {
+    setState(() {
+      if (posicao > 0) {
+        posicao--;
+        tempoEspera -= 4;
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final double progresso = 1 - (posicao / 10);
@@ -32,9 +41,18 @@ class _FilaScreenState extends State<FilaScreen> {
             ),
             const SizedBox(height: 30),
             LinearProgressIndicator(value: progresso),
+            const SizedBox(height: 20),
+            ElevatedButton.icon(
+              onPressed: atualizarFila,
+              icon: const Icon(Icons.refresh),
+              label: const Text("Atualizar posição"),
+            ),
             const Spacer(),
             ElevatedButton(
               onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Você saiu da fila")),
+                );
                 Navigator.pop(context);
               },
               style: ElevatedButton.styleFrom(backgroundColor: Colors.red),

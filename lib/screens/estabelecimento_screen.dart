@@ -22,12 +22,19 @@ class EstabelecimentoScreen extends StatelessWidget {
             margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             child: ListTile(
               title: Text(est.nome),
-              subtitle: Text("Espera: ${est.tempoEspera} min"),
-              trailing: ElevatedButton(
+              subtitle: Text("${est.tipo} - Espera: ${est.tempoEspera} min"),
+              trailing: ElevatedButton.icon(
                 onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Você entrou na fila de ${est.nome}'),
+                      duration: const Duration(seconds: 2),
+                    ),
+                  );
                   Navigator.pushNamed(context, '/fila');
                 },
-                child: const Text("Entrar na fila"),
+                icon: const Icon(Icons.login),
+                label: const Text("Entrar"),
               ),
             ),
           );
