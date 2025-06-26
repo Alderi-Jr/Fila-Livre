@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'screens/splash_screen.dart';
 import 'screens/estabelecimento_screen.dart';
+import 'package:filalivre/models/estabelecimento.dart';
 import 'screens/fila_screen.dart';
 
 class FilaLivreApp extends StatelessWidget {
@@ -26,8 +27,17 @@ class FilaLivreApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (_) => const SplashScreen(),
-        '/estabelecimentos': (_) => const EstabelecimentoScreen(),
-        '/fila': (_) => const FilaScreen(),
+        '/estabelecimentos': (context) => const EstabelecimentoScreen(),
+        '/fila': (context) {
+          final args = ModalRoute.of(context)?.settings.arguments;
+
+          if (args == null || args is! Estabelecimento) {
+            Navigator.pop(context);
+            return const Placeholder(); // Ou uma tela de erro
+          }
+
+          return FilaScreen(estabelecimento: args);
+        },
       },
     );
   }

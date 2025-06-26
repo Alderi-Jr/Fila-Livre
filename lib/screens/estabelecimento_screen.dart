@@ -52,7 +52,7 @@ class EstabelecimentoScreen extends StatelessWidget {
                         .toList(),
                   ),
                   const SizedBox(height: 10),
-                  ElevatedButton(
+                   ElevatedButton(
                     onPressed: () {
                       Navigator.pushNamed(
                         context,

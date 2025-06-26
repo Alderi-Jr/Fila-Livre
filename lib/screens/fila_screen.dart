@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 
+import '../models/estabelecimento.dart';
+
 class FilaScreen extends StatefulWidget {
-  const FilaScreen({super.key});
+  final Estabelecimento estabelecimento;
+
+  const FilaScreen({super.key, required this.estabelecimento});
+
+
 
   @override
   State<FilaScreen> createState() => _FilaScreenState();
@@ -15,7 +21,7 @@ class _FilaScreenState extends State<FilaScreen> {
     setState(() {
       if (posicao > 0) {
         posicao--;
-        tempoEspera -= 4;
+        tempoEspera = (tempoEspera * 0.8).round();
       }
     });
   }
@@ -23,40 +29,132 @@ class _FilaScreenState extends State<FilaScreen> {
   @override
   Widget build(BuildContext context) {
     final double progresso = 1 - (posicao / 10);
+    final ThemeData theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Acompanhamento da Fila")),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
+        extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
+      body: SingleChildScrollView(
         child: Column(
           children: [
-            Text(
-              "Sua posição na fila: $posicao",
-              style: const TextStyle(fontSize: 22),
+            Stack(
+              children: [
+                Container(
+                  height: 200,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: NetworkImage(widget.estabelecimento.imagemUrl),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                Positioned.fill(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [Colors.black54, Colors.transparent],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 10),
-            Text(
-              "Tempo estimado de espera: $tempoEspera minutos",
-              style: const TextStyle(fontSize: 18),
-            ),
-            const SizedBox(height: 30),
-            LinearProgressIndicator(value: progresso),
-            const SizedBox(height: 20),
-            ElevatedButton.icon(
-              onPressed: atualizarFila,
-              icon: const Icon(Icons.refresh),
-              label: const Text("Atualizar posição"),
-            ),
-            const Spacer(),
-            ElevatedButton(
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Você saiu da fila")),
-                );
-                Navigator.pop(context);
-              },
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-              child: const Text("Sair da fila"),
+
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.estabelecimento.nome,
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Icon(Icons.category, size: 16, color: theme.hintColor),
+                      const SizedBox(width: 4),
+                      Text(widget.estabelecimento.tipo),
+                    ],
+                  ),
+
+                  const SizedBox(height: 24),
+                  Card(
+                    elevation: 3,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text("POSIÇÃO ATUAL", style: theme.textTheme.labelSmall),
+                                  Text("$posicaoª", style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+                                ],
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text("TEMPO ESTIMADO", style: theme.textTheme.labelSmall),
+                                  Text("$tempoEspera min", style: const TextStyle(fontSize: 20)),
+                                ],
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          LinearProgressIndicator(
+                            value: progresso,
+                            minHeight: 10,
+                            borderRadius: BorderRadius.circular(10),
+                            color: theme.colorScheme.primary,
+                            backgroundColor: theme.colorScheme.primary.withOpacity(0.2),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 24),
+                  SizedBox(
+                    width: double.infinity,
+                    child: FilledButton.icon(
+                      onPressed: atualizarFila,
+                      icon: const Icon(Icons.refresh),
+                      label: const Text("Atualizar Minha Posição"),
+                      style: FilledButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text("Sair da Fila", style: TextStyle(color: Colors.red)),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
