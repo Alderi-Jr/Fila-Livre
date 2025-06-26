@@ -4,11 +4,6 @@ import '../models/estabelecimento.dart';
 class EstabelecimentoScreen extends StatelessWidget {
   const EstabelecimentoScreen({super.key});
 
-  final List<Estabelecimento> estabelecimentos = const [
-    Estabelecimento(nome: "Restaurante Bom Sabor", tipo: "Restaurante", tempoEspera: 15),
-    Estabelecimento(nome: "Clínica Vida+", tipo: "Clínica", tempoEspera: 30),
-    Estabelecimento(nome: "Salão Estilo", tipo: "Salão", tempoEspera: 10),
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -19,22 +14,55 @@ class EstabelecimentoScreen extends StatelessWidget {
         itemBuilder: (context, index) {
           final est = estabelecimentos[index];
           return Card(
-            margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            child: ListTile(
-              title: Text(est.nome),
-              subtitle: Text("${est.tipo} - Espera: ${est.tempoEspera} min"),
-              trailing: ElevatedButton.icon(
-                onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Você entrou na fila de ${est.nome}'),
-                      duration: const Duration(seconds: 2),
+            margin: const EdgeInsets.all(8),
+            elevation: 3,
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [                  Container(
+                    height: 120,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      borderRadius: BorderRadius.circular(8),
+                      image: DecorationImage(
+                        image: NetworkImage(est.imagemUrl),
+                        fit: BoxFit.cover,
+                        onError: (_, __) => const Icon(Icons.business, size: 50),
+                      ),
                     ),
-                  );
-                  Navigator.pushNamed(context, '/fila');
-                },
-                icon: const Icon(Icons.login),
-                label: const Text("Entrar"),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    est.nome,
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    "⏳ ${est.tempoEspera} min • 🏷️ ${est.tipo}",
+                    style: TextStyle(color: Colors.teal[700]),
+                  ),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 4,
+                    children: est.caracteristicas
+                        .map((item) => Chip(
+                      label: Text(item),
+                      padding: EdgeInsets.zero,
+                    ))
+                        .toList(),
+                  ),
+                  const SizedBox(height: 10),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushNamed(
+                        context,
+                        '/fila',
+                        arguments: est,
+                      );
+                    },
+                    child: const Text("Entrar na Fila"),
+                  ),
+                ],
               ),
             ),
           );
