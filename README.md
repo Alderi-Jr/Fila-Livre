@@ -90,6 +90,7 @@ Execute:
 
 bash
 flutter run
+
 📌 Dependências (pubspec.yaml)
 yaml
 dependencies:
@@ -97,7 +98,9 @@ flutter:
 sdk: flutter
 shared_preferences: ^2.2.2
 cached_network_image: ^3.2.3
+
 🚀 Melhorias Futuras
+
 Integração com Firebase
 
 Notificações push
